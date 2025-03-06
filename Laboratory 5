@@ -1,0 +1,161 @@
+import java.util.*;
+
+class BST {
+    class Node {
+        int key;
+        Node left, right;
+        
+        public Node(int item) {
+            key = item;
+            left = right = null;
+        }
+    }
+    
+    Node root;
+    
+    BST() {
+        root = null;
+    }
+    
+    void insert(int key) {
+        root = insertRec(root, key);
+    }
+    
+    Node insertRec(Node root, int key) {
+        if (root == null) {
+            root = new Node(key);
+            return root;
+        }
+        if (key < root.key)
+            root.left = insertRec(root.left, key);
+        else if (key > root.key)
+            root.right = insertRec(root.right, key);
+        return root;
+    }
+    
+    void delete(int key) {
+        root = deleteRec(root, key);
+    }
+    
+    Node deleteRec(Node root, int key) {
+        if (root == null) return root;
+        
+        if (key < root.key)
+            root.left = deleteRec(root.left, key);
+        else if (key > root.key)
+            root.right = deleteRec(root.right, key);
+        else {
+            if (root.left == null) return root.right;
+            else if (root.right == null) return root.left;
+            root.key = minValue(root.right);
+            root.right = deleteRec(root.right, root.key);
+        }
+        return root;
+    }
+    
+    int minValue(Node root) {
+        int minv = root.key;
+        while (root.left != null) {
+            minv = root.left.key;
+            root = root.left;
+        }
+        return minv;
+    }
+    
+    void inorder() {
+        inorderRec(root);
+        System.out.println();
+    }
+    
+    void inorderRec(Node root) {
+        if (root != null) {
+            inorderRec(root.left);
+            System.out.print(root.key + " ");
+            inorderRec(root.right);
+        }
+    }
+    
+    void preorder() {
+        preorderRec(root);
+        System.out.println();
+    }
+    
+    void preorderRec(Node root) {
+        if (root != null) {
+            System.out.print(root.key + " ");
+            preorderRec(root.left);
+            preorderRec(root.right);
+        }
+    }
+    
+    void postorder() {
+        postorderRec(root);
+        System.out.println();
+    }
+    
+    void postorderRec(Node root) {
+        if (root != null) {
+            postorderRec(root.left);
+            postorderRec(root.right);
+            System.out.print(root.key + " ");
+        }
+    }
+    
+    List<Integer> toArray() {
+        List<Integer> list = new ArrayList<>();
+        int height = getHeight(root);
+        int size = (int) Math.pow(2, height) - 1;
+        List<Integer> arrayRepresentation = new ArrayList<>(Collections.nCopies(size, null));
+        toArrayRec(root, arrayRepresentation, 0);
+        return arrayRepresentation;
+    }
+    
+    void toArrayRec(Node root, List<Integer> list, int index) {
+        if (root != null && index < list.size()) {
+            list.set(index, root.key);
+            toArrayRec(root.left, list, 2 * index + 1);
+            toArrayRec(root.right, list, 2 * index + 2);
+        }
+    }
+    
+    int getHeight(Node root) {
+        if (root == null) return 0;
+        return 1 + Math.max(getHeight(root.left), getHeight(root.right));
+    }
+}
+
+public class BSTSimulation {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        boolean repeat;
+        
+        do {
+            BST tree = new BST();
+            System.out.println("Enter integers to insert into BST (separated by spaces):");
+            String[] inputs = scanner.nextLine().split(" ");
+            for (String input : inputs) {
+                tree.insert(Integer.parseInt(input));
+            }
+            
+            System.out.println("\n1-D Array Representation:");
+            System.out.println(tree.toArray());
+            
+            System.out.println("\nTree Traversals:");
+            System.out.print("Preorder: "); tree.preorder();
+            System.out.print("Inorder: "); tree.inorder();
+            System.out.print("Postorder: "); tree.postorder();
+            
+            System.out.print("\nEnter integer to delete: ");
+            int deleteKey = Integer.parseInt(scanner.nextLine());
+            tree.delete(deleteKey);
+            
+            System.out.println("\nAfter Deletion:");
+            System.out.print("Inorder: "); tree.inorder();
+            
+            System.out.print("\nTry again? (yes/no): ");
+            repeat = scanner.nextLine().equalsIgnoreCase("yes");
+        } while (repeat);
+        
+        scanner.close();
+    }
+}
