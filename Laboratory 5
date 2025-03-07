@@ -53,6 +53,12 @@ class BST {
         return root;
     }
     
+    void deleteMultiple(int[] keys) {
+        for (int key : keys) {
+            root = deleteRec(root, key);
+        }
+    }
+    
     int minValue(Node root) {
         int minv = root.key;
         while (root.left != null) {
@@ -145,12 +151,15 @@ public class BSTSimulation {
             System.out.print("Inorder: "); tree.inorder();
             System.out.print("Postorder: "); tree.postorder();
             
-            System.out.print("\nEnter integer to delete: ");
-            int deleteKey = Integer.parseInt(scanner.nextLine());
-            tree.delete(deleteKey);
+            System.out.print("\nEnter integers to delete (separated by spaces): ");
+            String[] deleteInputs = scanner.nextLine().split(" ");
+            int[] deleteKeys = Arrays.stream(deleteInputs).mapToInt(Integer::parseInt).toArray();
+            tree.deleteMultiple(deleteKeys);
             
             System.out.println("\nAfter Deletion:");
+            System.out.print("Preorder: "); tree.preorder();
             System.out.print("Inorder: "); tree.inorder();
+            System.out.print("Postorder: "); tree.postorder();
             
             System.out.print("\nTry again? (yes/no): ");
             repeat = scanner.nextLine().equalsIgnoreCase("yes");
